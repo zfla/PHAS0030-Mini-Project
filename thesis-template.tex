@@ -300,11 +300,11 @@ The \emph{eccentricity} of an orbit is defined to be
 \begin{equation}
     e = \frac{\ell}{r_p} - 1,
 \end{equation}
-with $\ell$ and $r_p$ representing the \emph{semi-latus rectum} and \emph{periapsis distance} respectively, both of which are labelled on Figure \ref{fig:hyp_orbit}. Given the selection of the positions of the satellite at time $t=0$ and the interception point, the eccentricity of this orbit $e=1$, which denotes a parabolic orbit. The tangential velocity of this orbit is denoted by 
+\indent with $\ell$ and $r_p$ representing the \emph{semi-latus rectum} and \emph{periapsis distance} respectively, both of which are labelled on Figure \ref{fig:hyp_orbit}. Given the selection of the positions of the satellite at time $t=0$ and the interception point, the eccentricity of this orbit $e=1$, which denotes a parabolic orbit. The tangential velocity of this orbit is denoted by 
 \begin{equation}
     v = \sqrt{\frac{2\mu}{r}},
 \end{equation}
-where the \emph{standard gravitational parameter} $\mu$ is approximated to be equal to $GM$. Though assigning this velocity to the satellite allowed it to reach the interception point, it did so much quicker than Jupiter. As such, the deployment and subsequent injection of the satellite had to be delayed to ensure that it and the planet both reached the interception point at the same time. This was done by finding the difference in time taken for Jupiter and the satellite to reach the interception point, and fixing the satellite's position for this duration. This could be thought of as analogous to deploying the satellite with the right timing to intercept Jupiter directly. This time, the lag was perturbed to allow for the satellite to pass behind and in front of the planet.
+\indent where the \emph{standard gravitational parameter} $\mu$ is approximated to be equal to $GM$. Though assigning this velocity to the satellite allowed it to reach the interception point, it did so much quicker than Jupiter. As such, the deployment and subsequent injection of the satellite had to be delayed to ensure that it and the planet both reached the interception point at the same time. This was done by finding the difference in time taken for Jupiter and the satellite to reach the interception point, and fixing the satellite's position for this duration. This could be thought of as analogous to deploying the satellite with the right timing to intercept Jupiter directly. This time, the lag was perturbed to allow for the satellite to pass behind and in front of the planet.
 }
 
 \subsection{\textsl{Double slingshot}}
@@ -320,7 +320,7 @@ where the \emph{standard gravitational parameter} $\mu$ is approximated to be eq
 \section{\textsl{Preliminary investigation}}
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=1.0\textwidth]{graphics/3b_verlet.png}
+    \includegraphics[width=0.7\textwidth]{graphics/3b_verlet.png}
     \caption{3-body velocity Verlet}
     \label{fig:3b_verlet}
 \end{figure}
@@ -347,7 +347,62 @@ As Figure \ref{fig:rk4} demonstrates, the RK4 solver is a good tool for modellin
 
 \section{\textsl{Further investigation}}
 
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.7\textwidth]{graphics/earth_increase1.png}
+    \caption{Gravity assist between the satellite and Earth resulting in a velocity increase of the satellite}
+    \label{fig:earth_increase1.png}
+\end{figure}
 
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.7\textwidth]{graphics/earth_velocity_change1.png}
+    \caption{Velocity changes during the first gravity assist implementation}
+    \label{fig:earth_change1}
+\end{figure}
+
+
+\normalsize{\noindent For the first part of the further investigation, the method outlined yielded some good results, which is demonstrated in Figure \ref{fig:earth_increase1.png}, and a similar simulation was observed for the reduction of velocity case. Figure \ref{fig:earth_change1} also shows a small but noticeable change in velocities in both cases. Energy was also conserved, with an identical graph to \ref{fig:3b_conservation} produced in each case going forward.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.9\textwidth]{graphics/jupiter_big_increase.png}
+    \caption{A large velocity increase after switching Earth to Jupiter}
+    \label{fig:jupiter_big_increase}
+\end{figure}
+
+The next part of the investigation concluded that more extreme effects could be realised by considering a larger mass (Jupiter). At this stage, one of the largest hurdles of the simulation became apparent: the time step. Attempts to reduce the time step increased the computational time as expected, but too low of a time step resulted in the planet moving too far between each step to accurately model a gravity assist. Figure \ref{fig:jupiter_big_increase} showcases this. Though a 2.5 times increase is observed, the path in Jupiter's frame of reference is not smooth, which is believed to be due to the time step being too large. An approach that could be taken in future investigations could involve varying time step by multiplying it by the distance ($<1$) between the two planets if it goes below a certain threshold. This would ensure that the key parts of the simulation (when the planets are closer together) are modelled with greater accuracy. Like the case in Figure \ref{fig:jupiter_big_increase}, the alternative trajectory that passed in front of Jupiter also resulted in a substantial decrease in velocity, as one would expect.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.9\textwidth]{graphics/jupiter_reduced_vel.png}
+    \caption{Another large velocity increase, but this time with a more stable simulation}
+    \label{fig:jupiter_reduced_vel}
+\end{figure}
+
+In order to attempt to reduce these effects, the satellite was placed at a closer distance to the interception point. For it to reach the interception point at the same time, this required a lower velocity, which was hoped to produce a significant slingshot without having to travel go as far into Jupiter's sphere of influence. It is shown in Figure \ref{fig:jupiter_reduced_vel} that this is possible, with a similar increase to Figure \ref{fig:jupiter_big_increase} but with a smoother and more stable simulation. This was also the case when passing the satellite in front of Jupiter, where it experienced a smooth yet powerful gravity assist.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.9\textwidth]{graphics/circularmotion.png}
+    \caption{Gravity assist without neglecting the force on the satellite from the Sun}
+    \label{fig:circularmotion}
+\end{figure}
+
+When it came to reconsidering the Sun's influence on the satellite, there were some issues in determining how to move it from its initial position to the interception point. Assigning initial velocity no longer sufficed, so doing so with a parabolic orbit (as was mentioned in the previous chapter) was considered a viable option. With a future simulation that is able to harness more computing power, a function could be implemented to determine the parameters for a parabolic or elliptical orbit that intercepts the planet given its initial position. It sufficed with this simulation to determine a working orbit (in this case parabolic), and delaying the satellite's deployment such that it intercepts Jupiter at the assigned interception point. Figure \ref{fig:circularmotion} shows this, though the fact that the system is now perturbed by lag makes it slightly harder to adjust to facilitate increases in velocity. This would be another issue that would be fixed by having a varying time step. Furthermore, in Figure \ref{fig:circularmotion}, it is noticeable that although there is a spike where the gravity assist occurs, the velocity decreases over time. This is due to the gravitational "tailwind" that the satellite experiences as a result of its motion away from the Sun.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.9\textwidth]{graphics/fourbody.png}
+    \caption{Gravity assist without neglecting the force on the satellite from the Sun}
+    \label{fig:fourbody}
+\end{figure}
+
+When it came to the final part of the further investigation, a fourth body (Saturn) was introduced. The method used for it to reach the satellite was the same as the method used for the satellite to reach the interception point, and the perturbation of the delay allowed for different trajectories and therefore velocities post-slingshot. As can be seen in Figure \ref{fig:fourbody}, there is a second spike in the velocity where Saturn performs a gravity assist on the satellite. The shape of the graph is very similar to that in Figure \ref{fig:circularmotion}, which one would expect due to the Sun's gravitational pull on the satellite. Both assists contributed to a substantial increase in the velocity of the satellite each time, and it is evident from this that many more bodies could be added without a reduction in the quality of the simulation.
+}
+
+\section{\textsl{Other opportunities for exploration}}
+\normalsize{\noindent While the simulation from the first assist off Earth up to the two assists off Jupiter and Saturn were adequate, there are a few opportunities to improve upon the realism of these simulations. The first and most obvious point would be the introduction of elliptical orbits to replace the presently circular orbits in the simulation. While this would require usage of different formulae, it is by no means too much of a change from the current simulation, so it appears feasible. Given the problems that were previously mentioned relating to time step, it is difficult to achieve precise trajectories that do not require the perturbation of the system to carry out. The solution and possible implementation of it was discussed in the previous section by using a varying time step. Another interesting method in which the simulation can be developed is through the introduction of interstellar transport. While sounding complex, a simple model alike to this one can be made with the change of reference frame to the Milky Way, and the introduction of one or maybe more solar systems. This would obviously require more computational power but could be executed well with the varying time step idea. Finally, one more idea that came to mind is the idea of a powered flyby or an Oberth maneuver, as all this requires is the implementation of thrust to the small object. }
 
 %\input{}
 
@@ -364,15 +419,10 @@ As Figure \ref{fig:rk4} demonstrates, the RK4 solver is a good tool for modellin
 
 \clearpage
 
-\appendix
-\updatechaptername
-\titleformat{\chapter}[display]{\normalfont\LARGE}   {\textbf{\chaptertitlename\ \thechapter:}}{0cm}{\large} \titlespacing{\chapter}{0cm}{-40pt}{.7cm}
-
 \renewcommand{\thefigure}{\Alph{chapter}.\arabic{figure}}
 \renewcommand{\thetable}{\Alph{chapter}.\arabic{table}}
 
 \updatechaptername
-\chapter{\textsl{Appendix}}
 %\input{}
 
 \end{document}
