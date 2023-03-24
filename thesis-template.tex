@@ -159,7 +159,7 @@
 \setcounter{page}{2}
 \noindent 
 \chapter*{\huge{\textbf{Abstract}}}
-\normalsize{\noindent A gravity assist, or gravitational slingshot, is a complex maneuver which allows for an object to alter its velocity by entering another object's gravitational field. This project uses classical mechanics and the velocity Verlet algorithm to model a gravity assist in numerous scenarios, beginning with the modelling of a n-body orbits and testing different integrators, with the aims of understanding how this complex maneuver can be simulated in a high-level programming language. Some limitations became apparent early into the investigation, mainly involving computational power, but the project culminated in a four-body system where a satellite underwent a series of gravity assists from Jupiter and Saturn. It was found that the simulation of an object undergoing gravity assists in Python is highly feasible.}
+\normalsize{\noindent A gravity assist (or gravitational slingshot) is a complex maneuver which allows for an object to alter its velocity by entering another object's gravitational field. This project uses classical mechanics and the velocity Verlet algorithm to model a gravity assist in numerous scenarios, beginning with the modelling of two and three body orbits and testing different integrators, before moving on to understanding how this complex maneuver can be simulated in a high-level programming language. Some limitations became apparent early into the investigation, mainly involving computational power, but the project culminated in a four-body system where a satellite underwent a series of gravity assists from Jupiter and Saturn. It was found that the simulation of an object undergoing gravity assists in Python is highly feasible, and ideas for further exploration were provided.}
 %\input{}
 
 
@@ -192,9 +192,9 @@
 \cleardoublepage
 
 \chapter{\textsl{Introduction}}
-\normalsize{\noindent For an object with no forces acting on it, some form of propellant, or some work done, is required such that its velocity is altered. This comes as a result of Newton's First Law \cite{newton_principia_1999}, which states that any object any object at rest or in uniform motion will continue to do so unless a force is applied to it. Considering now a satellite with a finite amount of propellant, planning its route through space becomes an exigent task that requires the perfect management of fuel and necessitates even larger fuel payloads, both of which add extra costs and labour to the already expensive missions.
+\normalsize{\noindent For an object with no forces acting on it, some form of propellant, or some work done, is required such that its velocity is altered. This comes as a result of Newton's First Law \cite{newton_principia_1999}, which states that any object at rest or in uniform motion will continue to do so unless a force is applied to it. Considering now a satellite with a finite amount of propellant, planning its route through space becomes an exigent task that requires the perfect management of fuel and necessitates even larger fuel payloads, both of which add extra costs and labour to the already expensive missions.
 
-Thankfully, prior to the launch of the first man-made satellite even, scientists were already thinking about how to navigate the cosmos in a fuel-free way. The earliest descriptions of this came from Yuri Kondratyuk \cite{noauthor_kondratuk_nodate}, a Russian scientist whose early works explored the idea of using a planet's moons to accelerate an object. After many more expanded upon this idea, the first attempt of a "gravity assist" was carried out by the Soviet Union with the Luna 3 probe successfully photographing the far side of the Moon \cite{noauthor_luna_nodate}. Later, NASA's Pioneer 10 successfully used the technique to increase its velocity from 52,000 km/h to 132,000 km/h \cite{administrator_pioneer_2015}.}
+Thankfully, prior to the launch of the first man-made satellite even, scientists were already thinking about how to navigate the cosmos in a fuel-free way. The earliest descriptions of this came from Yuri Kondratyuk \cite{noauthor_kondratuk_nodate}, a Russian scientist whose early works explored the idea of using a planet's moons to accelerate an object. After many more expanded upon this idea, the first attempt of a "gravity assist" was carried out by the Soviet Union with the Luna 3 probe successfully photographing the far side of the Moon \cite{noauthor_luna_nodate}. Later, NASA's Pioneer 10 successfully used the technique to increase its velocity from 52,000 km/h to 132,000 km/h \cite{administrator_pioneer_2015}. The mechanics of gravity assists is already complex enough, but the question is how can Python and some elementary modules (Numpy and Matplotlib) be used to attempt to replicate it?}
 
 
 
@@ -207,7 +207,7 @@ Thankfully, prior to the launch of the first man-made satellite even, scientists
 \subsection{\textsl{Two-body Euler method}}
 
 \normalsize{\noindent 
-The first section of the preliminary investigation focused on modelling a two body system with one mass four orders of magnitude greater than the other, and fixed at the origin. This began by considering Newton's Law of Gravitation \cite{newton_principia_1999}
+The first section of the preliminary investigation focused on modelling a two body system with one mass 4 orders of magnitude greater than the other, and fixed at the origin. This began by considering Newton's Law of Gravitation \cite{newton_principia_1999}
 
 \begin{equation} \label{eq:1}
     \vec{F} = \frac{GMm}{r^2} \hat{r},
@@ -216,18 +216,20 @@ to determine the gravitational force between two objects with masses $M$ and $m$
     \vec{F} = \frac{mv^2}{r} \hat{r},
 \end{equation}
 
-\noindent where $v$ corresponds to the tangential velocity. Rearranging, one obtains 
+\noindent where $v$ corresponds to the tangential velocity, and rearranging, one obtains 
 \begin{equation} \label{eq:3}
     v = \sqrt{\frac{GM}{r}},
 \end{equation}
 
 \noindent which describes the velocity required for a circular orbit around an object of mass $M$ at distance $r$, or otherwise known as the \emph{orbital velocity}. Equation \ref{eq:3} was used extensively throughout when concerning an arbitrary initial position and assigning an initial velocity to a planet in a circular orbit. 
 
-The Euler method for propagating the system \cite{bowler_phas0030_nodate} is carried out with 
+The \emph{Euler method} \cite{bowler_phas0030_nodate} for propagating the system is carried out with 
 \begin{align}
     x\left(t+\mathrm{\Delta t}\right)=x\left(t\right)+\mathrm{\Delta t}\frac{dx\left(t\right)}{dt}.\\
-    v\left(t+\mathrm{\Delta t}\right)=v\left(t\right)+\mathrm{\Delta t}\frac{dv\left(t\right)}{dt}.
+    v\left(t+\mathrm{\Delta t}\right)=v\left(t\right)+\mathrm{\Delta t}\frac{dv\left(t\right)}{dt}
 \end{align}
+
+\noindent which propagates quantities $x(t)$ and $v(t)$ by time step $\Delta t$.
 }
 
 \normalsize{
@@ -240,13 +242,13 @@ The Euler method for propagating the system \cite{bowler_phas0030_nodate} is car
 \noindent and potential energy \cite{noauthor_gravitational_nodate}
 
 \begin{equation}
-    V = \frac{GMm}{r},
+    V = -\frac{GMm}{r},
 \end{equation}
 
 \noindent were calculated at each timestep (the larger planet was kept stationary throughout each simulation so it was not accounted for) and summed to check if the total energy was constant, thereby showing that the conservation laws were obeyed. Furthermore, to ensure the conservation of angular momentum \cite{noauthor_angular_nodate}, this quantity was calculated at each time step and plotted, and was calculated by 
 \begin{equation}
     L = mvr,
-\end{equation} where $v$ is the orbital speed and $r$ is the distance to the centre of the orbit.
+\end{equation} where $v$ is the orbital speed and $r$ is the distance to the centre of the orbit. Should the total of these quantities change over the course of the simulation, it follows that they are violating the relevant conservation laws.
 
 \subsection{\textsl{Two-body velocity Verlet}}
 \normalsize{
@@ -263,14 +265,14 @@ When it came to propagating the orbits through time, the velocity Verlet integra
     x(t + \Delta t) &= x(t) + v(t)\Delta t  + \frac{F(t)}{2m} \Delta t^2 \\ 
     v(t + \Delta t) &= v(t) + \frac{F(t) + F(t + \Delta t)}{2m} \Delta t,
 \end{align} where $F(t)$ and $m$ is the force on and mass of the object being simulated.
-The initial conditions for the velocity are similar to Equation \ref{eq:3}, each term is multiplied by the ratio of the mass of the other planet to the total mass (ensuring that the ratios of the mass and radii was the same to place fix the centre of mass). 
+The initial conditions for the velocity are similar to Equation \ref{eq:3}, each term is multiplied by the ratio of the mass of the other planet to the total mass (ensuring that the ratios of the mass and radii was the same to fix the centre of mass). 
 }
 
 \subsection{\textsl{Three-body velocity Verlet}}
-\noindent \normalsize{Using Equation \ref{eq:3}, and some simulation parameters closely resembling the Sun, Earth, and Moon, the initial velocity was calculated of the Earth by considering the velocity of the Sun only. The Sun was also placed at the origin this time, unlike in the previous section. The velocity of the Moon relative to the Earth was also calculated using Equation \ref{eq:3}, ignoring the effects of the Sun. Then, the initial velocity of the Earth was added to this to determine the initial velocity of the Moon.}
+\normalsize{\noindent This and the next section focused on modelling the solar system, with this section in particular using the velocity Verlet integrator to propagate the simulation. Using Equation \ref{eq:3}, and some simulation parameters closely resembling the Sun, Earth, and Moon, the initial velocity was calculated of the Earth by considering the velocity of the Sun only. The Sun was also placed at the origin this time, unlike in the previous section. The velocity of the Moon relative to the Earth was also calculated using Equation \ref{eq:3}, ignoring the effects of the Sun. Then, the initial velocity of the Earth was added to this to determine the initial velocity of the Moon.}
 
 \subsection{\textsl{Two-body Runge-Kutta}}
-\normalsize{\noindent In the search for a better integrator, the fourth-order Runge Kutta integrator was used. This required the decomposition of the equation of motion to form two coupled first-order equations from a second-order equation. Starting from Equation \ref{eq:1}, one can divide both sides by $m$ and rearrange as follows
+\normalsize{\noindent To test another integrator, the fourth-order Runge Kutta integrator was used. This required the decomposition of the equation of motion to form two coupled first-order equations from a second-order equation. Starting from Equation \ref{eq:1}, one can divide both sides by $m$ and rearrange as follows
 \begin{align}
     a &= \frac{GM}{r^2} \\
     \frac{d^2x}{dt^2} &= \frac{GM}{r^2}.
@@ -286,23 +288,23 @@ Both of these equations were then passed into the RK solver, which enabled the p
 y(x+\mathrm{\Delta x})&=&y(x)+\frac{1}{6}\left(k_1+2k_2+2k_3+k_4\right)\\k_1&=&\mathrm{\Delta x}\ f(x,y(x))\\k_2&=&\mathrm{\Delta x}\ f(x+\mathrm{\Delta x}/2,y(x)+k_1/2)\\k_3&=&\mathrm{\Delta x}\ f(x+\mathrm{\Delta x}/2,y(x)+k_2/2)\\k_4&=&\mathrm{\Delta x}\ f(x+\mathrm{\Delta x},y(x)+k_3) \end{matrix}
 \end{align}
 
-\noindent was written in Python, and a two-body system was modelled using this. Given some setbacks with the usage of the RK4 solver to model a three-body system and the perceived adequacy compared to its simplicity of the Verlet integrator, the project continued with the latter.}
+\noindent was written in Python, and a two-body system was modelled using this.}
 
 \section{\textsl{Further investigation: gravity assists}}
 \subsection{\textsl{Simple gravity assist using Earth}}
 
 \normalsize{\noindent A \emph{gravity assist} is a maneuver that results in a change in velocity of an object when it enters the sphere of influence of another object \cite{noauthor_basics_nodate}. The \emph{radius of the sphere of influence} $r_{\mathrm{SOI}}$  \cite{noauthor_sphere_nodate} is calculated by
 \begin{equation}
-    r_{\mathrm{SOI}} \approx a\left( \frac{m}{M} \right)^{2/5}.
+    r_{\mathrm{SOI}} \approx a\left( \frac{m}{M} \right)^{2/5},
 \end{equation}
 
-\noindent Using the same masses as previously, but this time changing the Moon's mass to be closer to that of a satellite (approximated to be 1 tonne), the values for $r_{\mathrm{SOI}}$ were calculated for both the Sun and Earth. This was taken into consideration when choosing the path for the satellite to take, since selecting a path that placed it outside of the Earth's SOI would result in no velocity change at all. 
+\noindent where $a$ corresponds to the semi-major axis of the orbit (equal to unity in the case of a circular orbit) of mass $m$ around mass $M$. Using the same masses as previously for the Sun and Earth, but this time changing the Moon's mass to be closer to that of a satellite (approximated to be 1 tonne), the value for $r_{\mathrm{SOI}}$ was calculated for Earth. This was taken into consideration when choosing the path for the satellite to take, since selecting a path that placed it outside of the Earth's SOI would result in no velocity change at all. 
 
 To begin with, the influence of the Sun on the satellite's motion was neglected, and the satellite was given an arbitrary position outside of the Earth's sphere of influence. In order to allow the satellite to intersect the Earth's orbit at an arbitrary point, the simulation was ran to determine the time taken $t$ for Earth to reach said point. Then, using the fact that for constant acceleration $v = \Delta r / \Delta t$ \cite{newton_principia_1999} the initial velocity of the satellite was calculated to be 
 \begin{equation}
     \vec{v_0} = \frac{(r_{\mathrm{IP}} - r_0)}{t},
 \end{equation}
-where $r_{\mathrm{IP}}$ and $r_0$ are the positions of the satellite near the interception point and at the start of the simulation. The interception point was perturbed by a small amount (still ensuring that it was not outside the sphere of influence of Earth), such that in one case it passed in front of the Earth, and in another case behind it. This is due to the idea that passing in front or behind an object can have different effects for the final velocity of the object. To be specific, passing behind the object, results in an increase in velocity, and the opposite occurs for passing in front of it. It is worth noting that the object's velocity remains the same in the assisting body's (in this case Earth's) frame of reference, but will be altered in other (in this case the Sun's) frame(s) of reference. In order to understand this, a quick overview of hyperbolic orbits is required.
+where $r_{\mathrm{IP}}$ and $r_0$ are the positions of the satellite near the interception point and at the start of the simulation. The interception point was perturbed by a small amount (still ensuring that it was not outside the sphere of influence of Earth), such that in one case it passed in front of the Earth, and in another case behind it. This is due to the idea that passing in front or behind an object can have different effects for the final velocity of the object. To be specific, passing behind the object, results in an increase in velocity, and the opposite occurs for passing in front of it. In order to understand this, a quick overview of hyperbolic orbits is required.
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.6\textwidth]{graphics/Orbits.jpg}
@@ -310,11 +312,11 @@ where $r_{\mathrm{IP}}$ and $r_0$ are the positions of the satellite near the in
     \label{fig:hyp_orbit}
 \end{figure}
 
-Quite simply, a hyperbolic orbit around an object resembles a hyperbole in the object's frame of reference and has an eccentricity $e > 1$ \cite{kluever_spaceflight_2003}. For the object in the hyperbolic orbit, two asymptotes can be constructed which intersect at point $O$, distance $a$ from the periapsis of the orbit, and a line drawn parallel to the asymptote from the centre of the orbit is distance $b$ from the asymptote . This is illustrated in Figure \ref{fig:hyp_orbit} . At an infinite distance along each asymptote, the \emph{Entering and Exiting Hyperbolic Excess Velocity} $\vec{v_{\mp \infty}}$ is defined , with the difference between the two
+Quite simply, a hyperbolic orbit around an object resembles a hyperbola in the object's frame of reference and has an eccentricity $e > 1$ \cite{kluever_spaceflight_2003}. For the object in the hyperbolic orbit, two asymptotes can be constructed which intersect at point $O$, distance $a$ from the periapsis of the orbit, and a line drawn parallel to the asymptote from the centre of the orbit is distance $b$ from the asymptote . This is illustrated in Figure \ref{fig:hyp_orbit} . At an infinite distance along each asymptote, the \emph{Entering and Exiting Hyperbolic Excess Velocity} $\vec{v_{\mp \infty}}$ is defined , with the difference between the two
 \begin{equation} 
     \vec{v_{\infty}} - \vec{v_{-\infty}} = \Delta \vec{v},
 \end{equation}
-corresponding to the change in velocity in the reference frame of the body that the object is orbiting.
+corresponding to the change in velocity in the reference frame of the body that the object is orbiting. 
 }
 
 In the case of the satellite passing in front of Earth, it encounters a gravitational "headwind" as a result of the force from Earth on the satellite that reduces the exiting hyperbolic excess velocity, resulting in a negative change in velocity. Conversely, the satellite passing behind Earth experiences a gravitational "tailwind" that increases the exiting hyperbolic excess velocity, resulting in a positive change in velocity. It is with this idea that two cases of gravity assists were attempted.
@@ -325,7 +327,7 @@ Following this, the satellite was moved closer to Jupiter (which in conjunction 
 }
 
 \subsection{\textsl{Including the influence of the Sun}}
-\normalsize{\noindent Keeping Jupiter as the planet that will perform the gravity assist, the force from the Sun on the satellite was once again considered. The satellite's position was once again arbitrarily selected, but the initial velocity required recalculation. In order for it to reach the same interception point, either an elliptical, parabolic, or hyperbolic orbit was required.
+\normalsize{\noindent Keeping Jupiter as the planet that will perform the gravity assist, the force from the Sun on the satellite was once again considered. The satellite's position was again arbitrarily selected, but the initial velocity required recalculation. In order for it to reach the same interception point, either an elliptical, parabolic, or hyperbolic orbit was required.
 
 The \emph{eccentricity} of an orbit \cite{kluever_spaceflight_2003} is defined to be
 \begin{equation}
@@ -335,7 +337,7 @@ The \emph{eccentricity} of an orbit \cite{kluever_spaceflight_2003} is defined t
 \begin{equation}
     v = \sqrt{\frac{2\mu}{r}},
 \end{equation}
-\noindent where the \emph{standard gravitational parameter} $\mu$ is approximated to be equal to $GM$. Though assigning this velocity to the satellite allowed it to reach the interception point, it did so much quicker than Jupiter. As such, the deployment and subsequent injection of the satellite had to be delayed to ensure that it and the planet both reached the interception point at the same time. This was done by finding the difference in time taken for Jupiter and the satellite to reach the interception point, and fixing the satellite's position for this duration. This could be thought of as analogous to deploying the satellite with the right timing to intercept Jupiter directly. This time, the lag was perturbed to allow for the satellite to pass behind and in front of the planet.
+\noindent where the \emph{standard gravitational parameter} $\mu$ is approximated to be equal to $GM$, given the large difference in masses. Though assigning this velocity to the satellite allowed it to reach the interception point, it did so much quicker than Jupiter. As such, the deployment and subsequent injection of the satellite had to be delayed to ensure that it and the planet both reached the interception point at the same time. This was done by finding the difference in time taken for Jupiter and the satellite to reach the interception point, and fixing the satellite's position for this duration. This could be thought of as being analogous to deploying the satellite with the right timing to intercept Jupiter directly. This time, the lag was perturbed to allow for the satellite to pass behind and in front of the planet.
 }
 
 \subsection{\textsl{Double slingshot}}
@@ -377,7 +379,7 @@ It is shown that the velocity Verlet appears to be a much more promising method 
     \label{fig:3b_verlet}
 \end{figure}
 
-\normalsize{The velocity Verlet integrator was proven to work sufficiently well when it came to modelling the three-body orbit. As can be seen from Figure \ref{fig:3b_verlet}, both orbits were stable, but there is a noticeable thickness to the orbit of the Moon around the Earth which is an indication of some error in the simulation.
+\normalsize{The velocity Verlet integrator was proven to work sufficiently well when it came to modelling the three-body orbit. This was not the case initially however, since the plot in the Earth's reference frame was a noticeable spiral instead of a circle. This was rectified by lowering the time step and revising the initial conditions. As can be seen from Figure \ref{fig:3b_verlet}, both orbits were stable, but there is still a noticeable thickness to the orbit of the Moon around the Earth which is an indication of some error remaining in the simulation.
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.7\textwidth]{graphics/3b_conservation.png}
@@ -394,7 +396,7 @@ Likely arising from the minor fluctuations in orbital radius that appear in Figu
     \caption{2-body Runge-Kutta simulation with conservation of energy}
     \label{fig:rk4}
 \end{figure}
-As Figure \ref{fig:rk4} demonstrates, the RK4 solver is a good tool for modelling the two-body problem, as it provides a stable orbit and energy is a conserved quantity. Angular momentum was also conserved. With that said, adding in a third body provided some difficulties that were not encountered during the programming of the velocity Verlet integrator. Mainly, it was difficult to include the interactions between the Moon and the Earth, given that the Earth's orbit had to be calculated beforehand, and a separate solver function had to be defined to resolve this issue. This was not pursued due to time constraints, but a future approach involving the Runge-Kutta integrator could harness the object-oriented programming paradigm to greatly simplify the problem.}
+As Figure \ref{fig:rk4} demonstrates, the RK4 solver is a good tool for modelling the two-body problem, as it provides a stable orbit and energy is a conserved quantity. Angular momentum was also conserved. With that said, adding in a third body appeared to be less simple than with the velocity Verlet method. This was not pursued due to time constraints, but a future approach involving the Runge-Kutta integrator could harness the object-oriented programming paradigm to greatly simplify the problem.}
 
 \section{\textsl{Further investigation}}
 
@@ -408,7 +410,7 @@ As Figure \ref{fig:rk4} demonstrates, the RK4 solver is a good tool for modellin
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.7\textwidth]{graphics/earth_velocity_change1.png}
-    \caption{Velocity changes during the first gravity assist implementation}
+    \caption{Velocity changes during the first gravity assist  implementation (Earth)}
     \label{fig:earth_change1}
 \end{figure}
 
@@ -449,7 +451,7 @@ When it came to reconsidering the Sun's influence on the satellite, there were s
     \label{fig:fourbody}
 \end{figure}
 
-When it came to the final part of the further investigation, a fourth body (Saturn) was introduced. The method used for it to reach the satellite was the same as the method used for the satellite to reach the interception point, and the perturbation of the delay allowed for different trajectories and therefore velocities post-slingshot. As can be seen in Figure \ref{fig:fourbody}, there is a second spike in the velocity where Saturn performs a gravity assist on the satellite. The shape of the graph is very similar to that in Figure \ref{fig:circularmotion}, which one would expect due to the Sun's gravitational pull on the satellite. Both assists contributed to a substantial increase in the velocity of the satellite each time, and it is evident from this that many more bodies could be added without a reduction in the quality of the simulation.
+When it came to the final part of the further investigation, a fourth body (Saturn) was introduced. The method used for it to reach the satellite was the same as the method used for the satellite to reach the interception point, and the perturbation of the delay allowed for different trajectories and therefore velocities post-slingshot. As can be seen in Figure \ref{fig:fourbody}, there is a second spike in the velocity where Saturn performs a gravity assist on the satellite. The shape of the graph is very similar to that in Figure \ref{fig:circularmotion}, which one would expect due to the Sun's gravitational pull on the satellite. Both assists contributed to a substantial increase in the velocity of the satellite each time (as is shown by the peaks in the graphs), and it is evident from this that many more bodies could be added without a reduction in the quality of the simulation.
 }
 
 \section{\textsl{Other opportunities for exploration}}
@@ -459,7 +461,7 @@ When it came to the final part of the further investigation, a fourth body (Satu
 
 \chapter{\textsl{Conclusions}}
 
-\normalsize{\noindent This project aimed to simulate gravity assists under different scenarios in order to understand how a complex astrodynamical maneuver can be simulated in a high level programming language. It succeeded in modelling scenarios ranging from a satellite merely being deflected by Earth's orbit to a multi-stage gravity assist from Jupiter and Saturn. Computational power became a clear issue early into the investigation, but numerous feasible suggestions were made (varying time step or parallel processing) to mitigate this. Nonetheless, with the success of this project, it was suggested also that more complex maneuvers involving thrust are attempted, or greater realism is pursued with the usage of elliptical orbits instead of circular orbits. Overall, high-level programming languages are versatile enough to handle complex astrodynamical simulations, and there is much room to explore more challenging scenarios.}
+\normalsize{\noindent This project aimed to simulate gravity assists under different scenarios in order to understand how a complex astrodynamical maneuver like a gravity assist can be simulated in a high level programming language. It succeeded in modelling scenarios ranging from a satellite merely being deflected by Earth's orbit to a multi-stage gravity assist from Jupiter and Saturn. Computational power became a clear issue early into the investigation, but numerous feasible suggestions were made (varying time step or parallel processing) to mitigate this. Nonetheless, with the success of this project, it was suggested also that more complex maneuvers involving thrust are attempted, or greater realism is pursued with the usage of elliptical orbits instead of circular orbits. Overall, high-level programming languages like Python seem versatile enough to handle complex astrodynamical simulations, and there is much room to explore more challenging scenarios.}
 
 %\input{}
 
